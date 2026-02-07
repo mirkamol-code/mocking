@@ -22,8 +22,7 @@ public class AppTest {
 
         verify(myMock).add("Hello");
 
-        String actual = myMock.get(0);
-        assertThat(actual).isEqualTo("Hello");
+        assertThat(myMock.get(0)).isEqualTo("Hello");
     }
 
     @Test
