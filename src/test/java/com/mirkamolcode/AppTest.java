@@ -29,6 +29,37 @@ public class AppTest {
     void myFirstTestWithOutMockito() {
         names.add("Hello");
         assertThat(names).hasSize(1);
+    }
 
+    @Test
+    void shouldVerifyNoInteractions() {
+        // given
+        List<String> listMock = mock();
+        // when
+        // then
+        verifyNoInteractions(listMock);
+    }
+
+    @Test
+    void shouldVerifyNoMoreInteractions() {
+        // given
+        List<String> listMock = mock();
+        // when
+        listMock.add("hello");
+        // then
+        verify(listMock).add("hello");
+        verifyNoMoreInteractions(listMock);
+    }
+
+    @Test
+    void shouldVerifyInteractionsMode() {
+        // given
+        List<String> listMock = mock();
+        // when
+        listMock.clear();
+        listMock.clear();
+        // then
+        verify(listMock, times(2)).clear();
+        verifyNoMoreInteractions(listMock);
     }
 }
