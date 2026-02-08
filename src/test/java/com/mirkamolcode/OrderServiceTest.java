@@ -12,15 +12,17 @@ import java.math.BigDecimal;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {
     @Mock
     private PaymentProcessor stripePaymentProcessor;
+    @Mock
+    private OrderRepository orderRepository;
     @InjectMocks
     private OrderService underTest;
-
 
 
     @Test
@@ -28,11 +30,26 @@ class OrderServiceTest {
         // given
         BigDecimal amount = BigDecimal.TEN;
         when(stripePaymentProcessor.charge(amount)).thenReturn(true);
+        when(orderRepository.save(any())).thenReturn(1);
         // when
-        boolean actual = underTest.processOrder(amount);
+        boolean actual = underTest.processOrder(null, amount);
         // then
-        Mockito.verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+        verify(stripePaymentProcessor).charge(BigDecimal.TEN);
         assertThat(actual).isTrue();
+    }
+
+    @Test
+    void shouldThrowWhenChargeFails() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        when(stripePaymentProcessor.charge(amount)).thenReturn(false);
+        // when
+        assertThatThrownBy(() -> underTest.processOrder(null, amount))
+                .hasMessageContaining("Payment failed")
+                .isInstanceOf(IllegalStateException.class);
+        // then
+        verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+        verifyNoInteractions(orderRepository);
     }
 
     @Test
