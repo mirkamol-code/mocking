@@ -1,14 +1,15 @@
 package com.mirkamolcode;
 
-import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
+import org.mockito.Captor;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
-import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
+import java.time.ZonedDateTime;
 import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
@@ -23,18 +24,55 @@ class OrderServiceTest {
     private OrderRepository orderRepository;
     @InjectMocks
     private OrderService underTest;
-
+    @Captor
+    private ArgumentCaptor<Order> orderArgumentCaptor;
 
     @Test
-    void canCharge() {
+    void canChargeWithAssertCaptor() {
         // given
         BigDecimal amount = BigDecimal.TEN;
+        User user = new User(1, "James");
         when(stripePaymentProcessor.charge(amount)).thenReturn(true);
         when(orderRepository.save(any())).thenReturn(1);
         // when
-        boolean actual = underTest.processOrder(null, amount);
+        boolean actual = underTest.processOrder(user, amount);
         // then
         verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+
+//        ArgumentCaptor<Order> orderArgumentCaptor = ArgumentCaptor.forClass(Order.class);
+
+        verify(orderRepository).save(orderArgumentCaptor.capture());
+
+        Order orderArgumentCaptureValue = orderArgumentCaptor.getValue();
+        assertThat(orderArgumentCaptureValue.amount()).isEqualTo(amount);
+        assertThat(orderArgumentCaptureValue.user()).isEqualTo(user);
+        assertThat(orderArgumentCaptureValue.id()).isNotNull();
+        assertThat(orderArgumentCaptureValue.zonedDateTime())
+                .isBefore(ZonedDateTime.now())
+                .isNotNull();
+        assertThat(actual).isTrue();
+
+    }
+
+    @Test
+    void canChargeWithAssertArg() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        User user = new User(1, "James");
+        when(stripePaymentProcessor.charge(amount)).thenReturn(true);
+        when(orderRepository.save(any())).thenReturn(1);
+        // when
+        boolean actual = underTest.processOrder(user, amount);
+        // then
+        verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+        verify(orderRepository).save(assertArg(order -> {
+            assertThat(order.amount()).isEqualTo(amount);
+            assertThat(order.user()).isEqualTo(user);
+            assertThat(order.id()).isNotNull();
+            assertThat(order.zonedDateTime())
+                    .isBefore(ZonedDateTime.now())
+                    .isNotNull();
+        }));
         assertThat(actual).isTrue();
     }
 
