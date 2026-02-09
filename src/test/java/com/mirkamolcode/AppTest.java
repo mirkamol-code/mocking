@@ -4,6 +4,9 @@ package com.mirkamolcode;
 import org.junit.jupiter.api.Test;
 import org.mockito.BDDMockito;
 
+import java.time.Clock;
+import java.time.ZoneId;
+import java.time.ZonedDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.concurrent.Executors;
@@ -117,5 +120,27 @@ public class AppTest {
                 .schedule(mockRunnable, 200, TimeUnit.MILLISECONDS);
         // then
         BDDMockito.then(mockRunnable).should(timeout(500).times(1)).run();
+    }
+
+    @Test
+    void canAdvanceClock() {
+        // given
+        Clock clock = mock();
+        ZoneId zoneId = ZoneId.of("Asia/Tashkent");
+        ZonedDateTime fixedZdt = ZonedDateTime.of(
+                2025, 1, 1,
+                0, 0,
+                0, 0,
+                zoneId);
+        given(clock.getZone()).willReturn(zoneId);
+        given(clock.instant()).willReturn(fixedZdt.toInstant());
+
+        ZonedDateTime now = ZonedDateTime.now(clock);
+        System.out.println(now);
+
+        // advance clock
+        given(clock.instant()).willReturn(now.plusMinutes(15).toInstant());
+        // then
+        System.out.println(ZonedDateTime.now(clock));
     }
 }
