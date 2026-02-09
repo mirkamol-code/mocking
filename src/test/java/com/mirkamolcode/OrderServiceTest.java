@@ -2,10 +2,7 @@ package com.mirkamolcode;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentCaptor;
-import org.mockito.Captor;
-import org.mockito.InjectMocks;
-import org.mockito.Mock;
+import org.mockito.*;
 import org.mockito.junit.jupiter.MockitoExtension;
 
 import java.math.BigDecimal;
@@ -14,6 +11,7 @@ import java.util.Map;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
+import static org.mockito.BDDMockito.*;
 import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
@@ -37,11 +35,13 @@ class OrderServiceTest {
         // when
         boolean actual = underTest.processOrder(user, amount);
         // then
-        verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+        InOrder inOrder = inOrder(stripePaymentProcessor, orderRepository);
+
+        inOrder.verify(stripePaymentProcessor).charge(BigDecimal.TEN);
 
 //        ArgumentCaptor<Order> orderArgumentCaptor = ArgumentCaptor.forClass(Order.class);
 
-        verify(orderRepository).save(orderArgumentCaptor.capture());
+        inOrder.verify(orderRepository).save(orderArgumentCaptor.capture());
 
         Order orderArgumentCaptureValue = orderArgumentCaptor.getValue();
         assertThat(orderArgumentCaptureValue.amount()).isEqualTo(amount);
@@ -86,8 +86,22 @@ class OrderServiceTest {
                 .hasMessageContaining("Payment failed")
                 .isInstanceOf(IllegalStateException.class);
         // then
-        verify(stripePaymentProcessor).charge(BigDecimal.TEN);
+        verify(stripePaymentProcessor).charge(amount);
         verifyNoInteractions(orderRepository);
+    }
+
+    @Test
+    void shouldThrowWhenChargeFailsWithMockitoBDD() {
+        // given
+        BigDecimal amount = BigDecimal.TEN;
+        given(stripePaymentProcessor.charge(amount)).willReturn(false);
+        // when
+        assertThatThrownBy(() -> underTest.processOrder(null, amount))
+                .hasMessageContaining("Payment failed")
+                .isInstanceOf(IllegalStateException.class);
+        // then
+        then(stripePaymentProcessor).should().charge(amount);
+        then(orderRepository).shouldHaveNoInteractions();
     }
 
     @Test
