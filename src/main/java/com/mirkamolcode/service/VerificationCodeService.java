@@ -1,4 +1,6 @@
-package com.mirkamolcode;
+package com.mirkamolcode.service;
+
+import com.mirkamolcode.model.VerificationCode;
 
 import java.time.Clock;
 import java.time.Duration;

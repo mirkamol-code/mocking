@@ -1,7 +1,6 @@
-package com.mirkamolcode;
+package com.mirkamolcode.dto;
 
 import java.math.BigDecimal;
-import java.util.Objects;
 
 public record UpdateProductRequest(
         String name,

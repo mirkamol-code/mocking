@@ -1,4 +1,4 @@
-package com.mirkamolcode;
+package com.mirkamolcode.payment;
 
 import java.math.BigDecimal;
 

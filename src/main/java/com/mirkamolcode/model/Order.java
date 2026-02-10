@@ -1,4 +1,4 @@
-package com.mirkamolcode;
+package com.mirkamolcode.model;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

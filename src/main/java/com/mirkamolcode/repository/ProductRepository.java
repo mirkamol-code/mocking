@@ -1,4 +1,6 @@
-package com.mirkamolcode;
+package com.mirkamolcode.repository;
+
+import com.mirkamolcode.model.Product;
 
 import java.util.List;
 import java.util.Optional;

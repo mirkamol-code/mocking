@@ -1,5 +1,9 @@
-package com.mirkamolcode;
+package com.mirkamolcode.service;
 
+import com.mirkamolcode.model.Order;
+import com.mirkamolcode.model.User;
+import com.mirkamolcode.payment.PaymentProcessor;
+import com.mirkamolcode.repository.OrderRepository;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.*;
@@ -12,7 +16,6 @@ import java.util.Map;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.BDDMockito.*;
-import static org.mockito.Mockito.*;
 
 @ExtendWith(MockitoExtension.class)
 class OrderServiceTest {

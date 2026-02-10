@@ -1,4 +1,9 @@
-package com.mirkamolcode;
+package com.mirkamolcode.service;
+
+import com.mirkamolcode.model.Order;
+import com.mirkamolcode.model.User;
+import com.mirkamolcode.payment.PaymentProcessor;
+import com.mirkamolcode.repository.OrderRepository;
 
 import java.math.BigDecimal;
 import java.time.ZonedDateTime;

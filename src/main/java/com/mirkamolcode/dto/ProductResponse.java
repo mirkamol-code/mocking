@@ -1,4 +1,4 @@
-package com.mirkamolcode;
+package com.mirkamolcode.dto;
 
 import java.math.BigDecimal;
 import java.time.Instant;

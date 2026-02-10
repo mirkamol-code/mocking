@@ -1,4 +1,11 @@
-package com.mirkamolcode;
+package com.mirkamolcode.service;
+
+import com.mirkamolcode.exception.ResourceNotFound;
+import com.mirkamolcode.dto.NewProductRequest;
+import com.mirkamolcode.dto.ProductResponse;
+import com.mirkamolcode.dto.UpdateProductRequest;
+import com.mirkamolcode.model.Product;
+import com.mirkamolcode.repository.ProductRepository;
 
 import java.time.Instant;
 import java.util.List;
