@@ -99,6 +99,7 @@ public class ProductService {
         if (updateRequest.isPublished() != null && !updateRequest.isPublished().equals(product.getPublished())) {
             product.setPublished(updateRequest.isPublished());
         }
+        product.setUpdatedAt(Instant.now());
 
         productRepository.save(product);
     }
